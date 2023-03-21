@@ -3,6 +3,7 @@ from tkinter import messagebox
 from random import choice, randint, shuffle
 import pyperclip
 
+
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 def generate_password():
@@ -14,6 +15,13 @@ def generate_password():
     password_symbols = [choice(symbols) for _ in range(randint(2, 4))]
     password_numbers = [choice(numbers) for _ in range(randint(2, 4))]
 
+    password_list = password_letters + password_symbols + password_numbers
+    shuffle(password_list)
+
+    password = "".join(password_list)
+    password_entry.insert(0, password)
+    pyperclip.copy(password)
+
 # for char in range(nr_letters):
 #   password_list.append(random.choice(letters))
 #
@@ -23,12 +31,7 @@ def generate_password():
 # for char in range(nr_numbers):
 #   password_list += random.choice(numbers)
 
-    password_list = password_letters + password_symbols + password_numbers
-    shuffle(password_list)
 
-    password = "".join(password_list)
-    password_entry.insert(0, password)
-    pyperclip.copy(password)
 
 # password = ""
 # for char in password_list:
@@ -42,17 +45,32 @@ def save():
     website = website_entry.get()
     email = email_entry.get()
     password = password_entry.get()
+    new_data = {
+        website: {
+            "email": email,
+            "password": password,
+        }
+    }
 
     if len(website) == 0 or len(password) == 0:
-        messagebox.showinfo(title="Uh Oh", message="Make sure all fields are filled in")
+        messagebox.showinfo(title="Oops", message="Please make sure you haven't left any fields empty.")
     else:
-        is_ok = messagebox.askokcancel(title=website, message=f"Save current info? \nEmail {email} \nPassword: {password}")
-
+        is_ok = messagebox.askokcancel(title=website, message=f"These are the details entered: \nEmail: {email} "
+                                                              f"\nPassword: {password} \nIs it ok to save?")
         if is_ok:
-            with open("data.txt", "a") as data_file:  #creates a new data file to store inputs
-                data_file.write(f"{website} | {email} | {password}\n")  #writes typed data into the text file
-                website_entry.delete(0, END) #clears the screen of typed data
+            with open("data.txt", "a") as data_file:
+                data_file.write(f"{website} | {email} | {password}\n")
+                website_entry.delete(0, END)
                 password_entry.delete(0, END)
+
+
+        # is_ok = messagebox.askokcancel(title=website, message=f"Save current info? \nEmail {email} \nPassword: {password}")
+        #
+        # if is_ok:
+        # with open("data.txt", "a") as data_file:  #creates a new data file to store inputs
+        #      data_file.write(f"{website} | {email} | {password}\n")  #writes typed data into the text file
+        #      website_entry.delete(0, END) #clears the screen of typed data
+        #      password_entry.delete(0, END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
